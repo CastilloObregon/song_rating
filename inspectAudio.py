@@ -47,7 +47,7 @@ def appenDataAndSr():
 # ================================== FUNCIONES PARA MOSTRAR WAVEPLOTS Y ESPECTOGRAMAS ===========================
 
 def mostrarWaveplots(theData, theSr):
-    plt.figure(figsize=(14, 5))
+    plt.figure(figsize=(10, 4))
     librosa.display.waveplot(theData, sr=theSr)
     plt.show()
 
@@ -56,7 +56,7 @@ def main():
     # ========== Preparar la librería de audios ==========
     audioDatabase()
     appenDataAndSr()
-    
+
     for datos, senales in zip(datas, srs):
         mostrarWaveplots(datos,senales)
 
