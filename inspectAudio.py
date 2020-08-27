@@ -34,8 +34,8 @@ def audioFeatures(audioFile):
     #print(type(data), type(sr))
     print(data)
     print(sr)
-    x = np.linspace(0, 2 * np.pi, 400)
-    y = np.sin(x ** 2)
+    # x = np.linspace(0, 2 * np.pi, 400)
+    # y = np.sin(x ** 2)
     return data, sr
 
 def listaLimpia():
@@ -58,13 +58,47 @@ def appenDataAndSr():
 
 # ================================== FUNCIONES PARA MOSTRAR WAVEPLOTS Y ESPECTOGRAMAS ===========================
 
-def mostrarWaveplots(audioName, theData, theSr):
+def saveWaveplots(audioName, theData, theSr):
     plt.figure(figsize=(10, 4))
     librosa.display.waveplot(theData, sr=theSr)
     # plt.show()
-    filename = 'Espectogramas/' + str(audioName) +'.png'
-    files.append(filename)
+    filename = 'Images/Waveplots/' + str(audioName) +'.png'
+    # files.append(filename)
     plt.savefig(filename)
+
+def saveSpectograms(audioName, theData, theSr):
+    X = librosa.stft(theData)
+    Xdb = librosa.amplitude_to_db(abs(X))
+    plt.figure(figsize=(14, 5))
+    librosa.display.specshow(Xdb, sr=theSr, x_axis='time', y_axis='hz')
+    plt.colorbar()
+    # plt.show()
+    filename = 'Images/Espectogramas/Hz/' + str(audioName) +'.png'
+    plt.savefig(filename)
+    librosa.display.specshow(Xdb, sr=theSr, x_axis='time', y_axis='log')
+    # plt.show()
+    filename2 = 'Images/Espectogramas/Log/' + str(audioName) +'.png'
+    plt.savefig(filename2)
+
+
+def melSpectograms(audioName, theData, theSr):
+    # Transformada de Fourier
+    n_fft = 2048
+    D = np.abs(librosa.stft(theData[:n_fft], n_fft=n_fft, hop_length=n_fft+1))
+    plt.plot(D)
+    # plt.show()
+    hop_length = 512
+    D = np.abs(librosa.stft(theData, n_fft=n_fft,  hop_length=hop_length))
+    librosa.display.specshow(D, sr=theSr, x_axis='time', y_axis='linear');
+    plt.colorbar()
+    plt.show()
+
+    # Espectograma de Mel
+    DB = librosa.amplitude_to_db(D, ref=np.max)
+    librosa.display.specshow(
+        DB, sr=theSr, hop_length=hop_length, x_axis='time', y_axis='log')
+    plt.colorbar(format='%+2.0f dB')
+    plt.show()
 
 
 def main():
@@ -73,8 +107,15 @@ def main():
     appenDataAndSr()
     listaLimpia()
 
+
     for losAudios, datos, senales in zip(listaAudios, datas, srs):
-        mostrarWaveplots(losAudios, datos,senales)
+        saveWaveplots(losAudios, datos,senales)
+
+    for losAudios, datos, senales in zip(listaAudios, datas, srs):
+        saveSpectograms(losAudios, datos, senales)
+
+    for losAudios, datos, senales in zip(listaAudios, datas, srs):
+        melSpectograms(losAudios, datos, senales)
     
     print(files)
 
