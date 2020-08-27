@@ -9,9 +9,13 @@ import scipy
 import glob, os
 
 audios = []
-
+listaAudios = []
 datas = []
 srs = []
+
+files = []
+
+noDir = 'Audios/'
 
 #os.chdir("Audios")
 def audioDatabase():
@@ -34,6 +38,14 @@ def audioFeatures(audioFile):
     y = np.sin(x ** 2)
     return data, sr
 
+def listaLimpia():
+    for aud in audios:  # iterating on a copy since removing will mess things up
+        new_string = aud.replace(noDir, "")
+        listaAudios.append(new_string)
+    print("Hola somos la lista simplificada: ",listaAudios)
+    # print("Hola somos la lista normal: ",audios)
+    
+
 # ================================== FUNCIÓN PARA AGREGAR CARACTERÍSTICAS DEL AUDIO A LISTA ===========================
 
 def appenDataAndSr():
@@ -46,19 +58,25 @@ def appenDataAndSr():
 
 # ================================== FUNCIONES PARA MOSTRAR WAVEPLOTS Y ESPECTOGRAMAS ===========================
 
-def mostrarWaveplots(theData, theSr):
+def mostrarWaveplots(audioName, theData, theSr):
     plt.figure(figsize=(10, 4))
     librosa.display.waveplot(theData, sr=theSr)
-    plt.show()
+    # plt.show()
+    filename = 'Espectogramas/' + str(audioName) +'.png'
+    files.append(filename)
+    plt.savefig(filename)
 
 
 def main():
     # ========== Preparar la librería de audios ==========
     audioDatabase()
     appenDataAndSr()
+    listaLimpia()
 
-    for datos, senales in zip(datas, srs):
-        mostrarWaveplots(datos,senales)
+    for losAudios, datos, senales in zip(listaAudios, datas, srs):
+        mostrarWaveplots(losAudios, datos,senales)
+    
+    print(files)
 
 if __name__ == "__main__":
     main()
