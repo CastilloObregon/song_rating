@@ -102,7 +102,7 @@ def melSpectograms(audioName, theData, theSr):
     # Espectograma de Mel
     DB = librosa.amplitude_to_db(D, ref=np.max)
     librosa.display.specshow(
-        DB, sr=theSr, hop_length=hop_length, x_axis='time', y_axis='mel')
+        DB, sr=theSr, hop_length=hop_length, x_axis='time', y_axis='log')
     # plt.colorbar(format='%+2.0f dB')
     # plt.show()
     filename2 = 'Images/Mel_Spectograms/y_axis_mel/' + str(audioName) +'.png'

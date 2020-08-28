@@ -21,18 +21,18 @@ y = np.sin(x ** 2)
 
 
 # mostrar onda sonora
-plt.figure(figsize=(14, 5))
-librosa.display.waveplot(data, sr=sr)
-plt.show()
+# plt.figure(figsize=(14, 5))
+# librosa.display.waveplot(data, sr=sr)
+# plt.show()
 
 
 # mostrar espectograma
-X = librosa.stft(data)
-Xdb = librosa.amplitude_to_db(abs(X))
-plt.figure(figsize=(14, 5))
-librosa.display.specshow(Xdb, sr=sr, x_axis='time', y_axis='hz')
-plt.colorbar()
-plt.show()
+# X = librosa.stft(data)
+# Xdb = librosa.amplitude_to_db(abs(X))
+# plt.figure(figsize=(14, 5))
+# librosa.display.specshow(Xdb, sr=sr, x_axis='time', y_axis='hz')
+# plt.colorbar()
+# plt.show()
 
 # librosa.display.specshow(Xdb, sr=sr, x_axis='time', y_axis='log')
 # plt.colorbar()
@@ -46,8 +46,8 @@ pianosong, _ = librosa.effects.trim(data)
 # Transformada de Fourier
 n_fft = 2048
 D = np.abs(librosa.stft(pianosong[:n_fft], n_fft=n_fft, hop_length=n_fft+1))
-plt.plot(D)
-plt.show()
+# plt.plot(D)
+# plt.show()
 
 
 hop_length = 512
@@ -60,5 +60,11 @@ D = np.abs(librosa.stft(pianosong, n_fft=n_fft,  hop_length=hop_length))
 DB = librosa.amplitude_to_db(D, ref=np.max)
 librosa.display.specshow(
     DB, sr=sr, hop_length=hop_length, x_axis='time', y_axis='log')
+plt.colorbar(format='%+2.0f dB')
+plt.show()
+
+
+S = librosa.feature.melspectrogram(y=data, sr=sr)
+librosa.display.specshow(librosa.power_to_db(S, ref=np.max))
 plt.colorbar(format='%+2.0f dB')
 plt.show()
