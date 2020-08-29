@@ -125,7 +125,6 @@ def main():
     for losAudios, datos, senales in zip(listaAudios, datas, srs):
         melSpectograms(losAudios, datos, senales)
     
-    print(files)
 
 if __name__ == "__main__":
     main()
