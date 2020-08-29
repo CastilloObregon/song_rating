@@ -71,7 +71,7 @@ def saveSpectograms(audioName, theData, theSr):
     Xdb = librosa.amplitude_to_db(abs(X))
     plt.figure(figsize=(14, 5))
     librosa.display.specshow(Xdb, sr=theSr, x_axis='time', y_axis='hz')
-    plt.colorbar()
+    # plt.colorbar()
     # plt.show()
     filename = 'Images/Espectogramas/Hz/' + str(audioName) +'.png'
     plt.savefig(filename)
@@ -96,8 +96,8 @@ def melSpectograms(audioName, theData, theSr):
     librosa.display.specshow(D, sr=theSr, x_axis='time', y_axis='linear')
     # plt.colorbar()
     # plt.show()
-    filename1 = 'Images/Mel_Spectograms/y_axis_linear/' + str(audioName) +'.png'
-    plt.savefig(filename1)
+    # filename1 = 'Images/Mel_Spectograms/y_axis_linear/' + str(audioName) +'.png'
+    # plt.savefig(filename1)
 
     # Espectograma de Mel
     DB = librosa.amplitude_to_db(D, ref=np.max)
@@ -118,13 +118,15 @@ def main():
 
     for losAudios, datos, senales in zip(listaAudios, datas, srs):
         saveWaveplots(losAudios, datos,senales)
-
+    print("Waveplots generados")
+    print("Generando Espectogramas")
     for losAudios, datos, senales in zip(listaAudios, datas, srs):
         saveSpectograms(losAudios, datos, senales)
-
+    print("Espectogramas generados")
+    print("Generando Espectogramas tipo mel")
     for losAudios, datos, senales in zip(listaAudios, datas, srs):
         melSpectograms(losAudios, datos, senales)
-    
+    print("Espectogramas tipo mel generados")
 
 if __name__ == "__main__":
     main()
