@@ -7,6 +7,8 @@ import sklearn
 import numpy as np
 import scipy
 import glob, os
+from numba import jit, cuda
+from numba import vectorize
 
 audios = []
 listaAudios = []
@@ -18,6 +20,7 @@ files = []
 noDir = 'Audios/'
 
 #os.chdir("Audios")
+
 def audioDatabase():
     for file in glob.glob("Audios/*.wav"):
         audios.append(file)
@@ -120,8 +123,8 @@ def main():
         saveWaveplots(losAudios, datos,senales)
     print("Waveplots generados")
     print("Generando Espectogramas")
-    for losAudios, datos, senales in zip(listaAudios, datas, srs):
-        saveSpectograms(losAudios, datos, senales)
+    # for losAudios, datos, senales in zip(listaAudios, datas, srs):
+    #     saveSpectograms(losAudios, datos, senales)
     print("Espectogramas generados")
     print("Generando Espectogramas tipo mel")
     for losAudios, datos, senales in zip(listaAudios, datas, srs):
