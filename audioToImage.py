@@ -17,6 +17,8 @@ srs = []
 
 files = []
 
+audiosLen = []
+
 noDir = 'Audios/'
 
 #os.chdir("Audios")
@@ -24,7 +26,7 @@ noDir = 'Audios/'
 def audioDatabase():
     for file in glob.glob("Audios/*.wav"):
         audios.append(file)
-        print(file)
+        # print(file)
 
     print("Los audios son: ", audios)
 
@@ -35,8 +37,8 @@ def audioDatabase():
 def audioFeatures(audioFile):
     data, sr = librosa.load(audioFile, sr=44100)
     #print(type(data), type(sr))
-    print(data)
-    print(sr)
+    # print(data)
+    # print(sr)
     # x = np.linspace(0, 2 * np.pi, 400)
     # y = np.sin(x ** 2)
     return data, sr
@@ -58,6 +60,11 @@ def appenDataAndSr():
         srs.append(elSr)
     print("Hola, somos datas: ", datas)
     print("Hola, somos srs: ", srs)
+
+def audioLen(audioName, theData, theSr):
+    durAudio = librosa.get_duration(theData, theSr)
+    texto = audioName + " dura: "+str(durAudio)
+    audiosLen.append(texto)
 
 # ================================== FUNCIONES PARA MOSTRAR WAVEPLOTS Y ESPECTOGRAMAS ===========================
 
@@ -118,6 +125,10 @@ def main():
     appenDataAndSr()
     listaLimpia()
 
+    for losAudios, datos, senales in zip(listaAudios, datas, srs):
+        audioLen(losAudios, datos,senales)
+    print("La duracion de los audios es: ")
+    print(audiosLen)
 
     for losAudios, datos, senales in zip(listaAudios, datas, srs):
         saveWaveplots(losAudios, datos,senales)
