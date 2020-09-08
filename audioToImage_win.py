@@ -1,5 +1,3 @@
-# ================== SCRIPT FOR MACOS ==================
-
 import librosa, librosa.display
 import IPython.display as ipd
 import matplotlib as matplotlib
@@ -9,6 +7,7 @@ import sklearn
 import numpy as np
 import scipy
 import glob, os
+import numba
 from numba import jit, cuda
 from numba import vectorize
 
@@ -21,7 +20,7 @@ files = []
 
 audiosLen = []
 
-noDir = 'Audios/'
+noDir = 'Audios\\'
 
 #os.chdir("Audios")
 
@@ -78,7 +77,7 @@ def saveWaveplots(audioName, theData, theSr):
     # files.append(filename)
     plt.savefig(filename)
 
-@jit(target ="cuda") 
+# @jit(target ="cuda") 
 def saveSpectograms(audioName, theData, theSr):
     X = librosa.stft(theData)
     Xdb = librosa.amplitude_to_db(abs(X))
@@ -93,19 +92,19 @@ def saveSpectograms(audioName, theData, theSr):
     filename2 = 'Images/Espectogramas/Log/' + str(audioName) +'.png'
     plt.savefig(filename2)
 
-@jit(target ="cuda") 
+@jit(target ="cpu") 
 def melSpectograms(audioName, theData, theSr):
 
-    pianosong, _ = librosa.effects.trim(theData)
+    # pianosong, _ = librosa.effects.trim(theData)
 
     # Transformada de Fourier
     # === Short time fourier transform ===
     n_fft = 2048
-    D = np.abs(librosa.stft(pianosong[:n_fft], n_fft=n_fft, hop_length=n_fft+1))
-    plt.plot(D)
+    D = np.abs(librosa.stft(theData[:n_fft], n_fft=n_fft, hop_length=n_fft+1))
+    # plt.plot(D)
     # plt.show()
     hop_length = 512
-    D = np.abs(librosa.stft(pianosong, n_fft=n_fft,  hop_length=hop_length))
+    D = np.abs(librosa.stft(theData, n_fft=n_fft,  hop_length=hop_length))
     librosa.display.specshow(D, sr=theSr, x_axis='time', y_axis='linear')
     # plt.colorbar()
     # plt.show()
@@ -113,6 +112,7 @@ def melSpectograms(audioName, theData, theSr):
     # plt.savefig(filename1)
 
     # Espectograma de Mel
+    
     DB = librosa.amplitude_to_db(D, ref=np.max)
     librosa.display.specshow(
         DB, sr=theSr, hop_length=hop_length, x_axis='time', y_axis='log')
@@ -120,8 +120,9 @@ def melSpectograms(audioName, theData, theSr):
     # plt.show()
     filename2 = 'Images/Mel_Spectograms/y_axis_mel/' + str(audioName) +'.png'
     plt.savefig(filename2)
+    
 
-
+  
 def main():
     # ========== Preparar la librería de audios ==========
     audioDatabase()
