@@ -29,15 +29,37 @@ from sklearn.datasets import make_blobs
 from sklearn.cluster import KMeans
 from sklearn.metrics import silhouette_score
 
-df = pd.read_csv (r'dataset.csv') 
-print (df)
+features = pd.read_csv(r'dataset.csv')
+features = pd.DataFrame(features)
+print(features)
 
+# with open('dataset.csv', newline='') as f:
+#     reader = csv.reader(f)
+#     data = list(reader)
 
-# scaler = StandardScaler()
-# scaled_features = scaler.fit_transform(features)
+# print(data)
 
+scaler = StandardScaler()
+scaled_features = scaler.fit_transform(features)
 
+# print(scaled_features)
 
+kmeans = KMeans(
+    init="random",
+    n_clusters=5,
+    n_init=10,
+    max_iter=300,
+    random_state=42
+    )
+
+# ======= Ejecucion de Kmeans clustering ========
+kmeans.fit(scaled_features)
+
+print(kmeans.inertia_)
+print(kmeans.cluster_centers_)
+print(kmeans.n_iter_)
+
+print(kmeans.labels_)
 
 # =========================================== CODIGO AUXILIAR ===========================================
 
@@ -64,4 +86,3 @@ print (df)
 #                        y_train,
 #                        epochs=100,
 #                        batch_size=128)
-
