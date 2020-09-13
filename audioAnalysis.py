@@ -39,18 +39,21 @@ print(features)
 
 # print(data)
 
-scaler = StandardScaler()
-scaled_features = scaler.fit_transform(features)
+featuresFixed = features.iloc[:, 1:27]
+print(featuresFixed)
 
+scaler = StandardScaler()
+scaled_features = scaler.fit_transform(featuresFixed)
 # print(scaled_features)
+
 
 kmeans = KMeans(
     init="random",
-    n_clusters=5,
+    n_clusters=6,
     n_init=10,
     max_iter=300,
     random_state=42
-    )
+)
 
 # ======= Ejecucion de Kmeans clustering ========
 kmeans.fit(scaled_features)
@@ -60,6 +63,10 @@ print(kmeans.cluster_centers_)
 print(kmeans.n_iter_)
 
 print(kmeans.labels_)
+
+
+
+
 
 # =========================================== CODIGO AUXILIAR ===========================================
 
