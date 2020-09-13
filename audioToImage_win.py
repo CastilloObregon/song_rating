@@ -10,6 +10,10 @@ import glob, os
 import numba
 from numba import jit, cuda
 from numba import vectorize
+# import nvidia.dali.ops as ops
+# import nvidia.dali.types as types
+# import nvidia.dali as dali
+# from nvidia.dali.pipeline import Pipeline
 
 audios = []
 listaAudios = []
