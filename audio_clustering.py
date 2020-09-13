@@ -102,12 +102,12 @@ def kmeansBasico(the_features):
 
 
 def kmeansElaborado(data, true_label_names):
-
-    print(data[:5, :3])
-    print(true_label_names[:5])
+    df1 = pd.DataFrame(data=data)
+    # print(data[:5, :3])
+    # print(true_label_names[:5])
     label_encoder = LabelEncoder()
     true_labels = label_encoder.fit_transform(true_label_names)
-    true_labels[:5]
+    # true_labels[:5]
     # print(label_encoder.classes_)
 
     n_clusters = len(label_encoder.classes_)
@@ -145,36 +145,45 @@ def kmeansElaborado(data, true_label_names):
 
     predicted_labels = pipe["clusterer"]["kmeans"].labels_
 
+
+
     silhouette_score(preprocessed_data, predicted_labels)
     adjusted_rand_score(true_labels, predicted_labels)
 
     pcadf = pd.DataFrame(
         pipe["preprocessor"].transform(data),
-        columns=["component_1","component_2"],
+        columns=["Variable_1","Variable_2"],
     )
 
-    pcadf["predicted_cluster"] = pipe["clusterer"]["kmeans"].labels_
-    pcadf["true_label"] = label_encoder.inverse_transform(true_labels)
+    pcadf["Cluster_generado"] = pipe["clusterer"]["kmeans"].labels_
+    pcadf["Label correcto"] = label_encoder.inverse_transform(true_labels)
 
     plt.style.use("fivethirtyeight")
     plt.figure(figsize=(8, 8))
 
     scat = sns.scatterplot(
-        "component_1",
-        "component_2",
+        "Variable_1",
+        "Variable_2",
         s=50,
         data=pcadf,
-        hue="predicted_cluster",
-        style="true_label",
+        hue="Cluster_generado",
+        style="Label correcto",
         palette="Set2",
     )
 
     scat.set_title(
         "Resultados de clustering de piezas de Fur Elise"
     )
-    plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.0)
-
+    # plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.0)
     plt.show()
+
+    cluster_map = pd.DataFrame()
+    # cluster_map['data_index'] = np.argmin(data)
+    cluster_map['cluster'] = pipe["clusterer"]["kmeans"].labels_
+
+    # print(cluster_map[cluster_map.cluster == 1])
+
+    # print(df1)
 
 
 def main():
@@ -184,6 +193,7 @@ def main():
     # ------ Extraccion con Pandas -------
     features = pd.read_csv(r'dataset.csv')
     features = pd.DataFrame(features)
+
     # print(features)
 
     data = np.genfromtxt(le_file, delimiter=",",
@@ -198,7 +208,7 @@ def main():
     scaler = StandardScaler()
     scaled_features = scaler.fit_transform(featuresFixed)
     # print(scaled_features)
-
+    print(data)
     kmeansElaborado(data, true_label_names)
 
 
