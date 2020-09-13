@@ -21,6 +21,8 @@ files = []
 
 audiosLen = []
 
+posDatas = []
+
 noDir = 'Audios/'
 
 #os.chdir("Audios")
@@ -38,12 +40,17 @@ def audioDatabase():
 
 def audioFeatures(audioFile):
     data, sr = librosa.load(audioFile, sr=44100)
+    dataRms, ind = librosa.effects.trim(data, top_db=25)
+
+    rmsShape = dataRms.shape
+    dataShape = data.shape
     #print(type(data), type(sr))
     # print(data)
     # print(sr)
     # x = np.linspace(0, 2 * np.pi, 400)
     # y = np.sin(x ** 2)
-    return data, sr
+    
+    return data, sr, dataRms, rmsShape, dataShape, ind
 
 def listaLimpia():
     for aud in audios:  # iterating on a copy since removing will mess things up
@@ -57,10 +64,20 @@ def listaLimpia():
 
 def appenDataAndSr():
     for lesAudios in audios:
-        laData, elSr = audioFeatures(lesAudios)
+        laData, elSr, dataRms, rmsShape, daShape, splitIndex = audioFeatures(lesAudios)
+        
+        # laPreData1 = librosa.effects.trim(laData)
+        # S = librosa.magphase(librosa.stft(laData, window=np.ones, center=False))[0]
+        # laPreData2 = librosa.feature.rms(y=laData)
+        
         datas.append(laData)
+        posDatas.append(dataRms)
         srs.append(elSr)
+        # print("Hola somos shape ",rmsShape)
+        # print("Hola somos shape normal ",daShape)
+
     print("Hola, somos datas: ", datas)
+    print("Hola, somos posDatas: ", posDatas)
     print("Hola, somos srs: ", srs)
 
 def audioLen(audioName, theData, theSr):
@@ -71,14 +88,16 @@ def audioLen(audioName, theData, theSr):
 # ================================== FUNCIONES PARA MOSTRAR WAVEPLOTS Y ESPECTOGRAMAS ===========================
 
 def saveWaveplots(audioName, theData, theSr):
-    plt.figure(figsize=(10, 4))
+    # plt.figure(figsize=(10, 4))
+    # forPiano = librosa.effects.split(theData, frame_length=100, hop_length=50)
     librosa.display.waveplot(theData, sr=theSr)
     # plt.show()
     filename = 'Images/Waveplots/' + str(audioName) +'.png'
     # files.append(filename)
     plt.savefig(filename)
+    plt.clf()
 
-@jit(target ="cuda") 
+# @jit(target ="cuda") 
 def saveSpectograms(audioName, theData, theSr):
     X = librosa.stft(theData)
     Xdb = librosa.amplitude_to_db(abs(X))
@@ -93,20 +112,22 @@ def saveSpectograms(audioName, theData, theSr):
     filename2 = 'Images/Espectogramas/Log/' + str(audioName) +'.png'
     plt.savefig(filename2)
 
-@jit(target ="cuda") 
+# @jit(target ="cuda") 
 def melSpectograms(audioName, theData, theSr):
 
-    pianosong, _ = librosa.effects.trim(theData)
-
+    pianosong, trIndex = librosa.effects.trim(theData)
+    
+    # forPiano, forTrIndex = librosa.effects.split(pianosong)
     # Transformada de Fourier
     # === Short time fourier transform ===
     n_fft = 2048
-    D = np.abs(librosa.stft(pianosong[:n_fft], n_fft=n_fft, hop_length=n_fft+1))
-    plt.plot(D)
+    # D = np.abs(librosa.stft(pianosong[:n_fft], n_fft=n_fft, hop_length=n_fft+1))
+    # plt.plot(D)
     # plt.show()
     hop_length = 512
     D = np.abs(librosa.stft(pianosong, n_fft=n_fft,  hop_length=hop_length))
-    librosa.display.specshow(D, sr=theSr, x_axis='time', y_axis='linear')
+    # D = np.abs(librosa.stft(y))**2
+    # librosa.display.specshow(D, sr=theSr, x_axis='time', y_axis='linear')
     # plt.colorbar()
     # plt.show()
     # filename1 = 'Images/Mel_Spectograms/y_axis_linear/' + str(audioName) +'.png'
@@ -114,12 +135,14 @@ def melSpectograms(audioName, theData, theSr):
 
     # Espectograma de Mel
     DB = librosa.amplitude_to_db(D, ref=np.max)
+    
     librosa.display.specshow(
         DB, sr=theSr, hop_length=hop_length, x_axis='time', y_axis='log')
     # plt.colorbar(format='%+2.0f dB')
     # plt.show()
     filename2 = 'Images/Mel_Spectograms/y_axis_mel/' + str(audioName) +'.png'
     plt.savefig(filename2)
+    plt.clf()
 
 
 def main():
@@ -128,20 +151,20 @@ def main():
     appenDataAndSr()
     listaLimpia()
 
-    for losAudios, datos, senales in zip(listaAudios, datas, srs):
+    for losAudios, datos, senales in zip(listaAudios, posDatas, srs):
         audioLen(losAudios, datos,senales)
     print("La duracion de los audios es: ")
     print(audiosLen)
 
-    for losAudios, datos, senales in zip(listaAudios, datas, srs):
+    for losAudios, datos, senales in zip(listaAudios, posDatas, srs):
         saveWaveplots(losAudios, datos,senales)
     print("Waveplots generados")
-    print("Generando Espectogramas")
+    # print("Generando Espectogramas")
     # for losAudios, datos, senales in zip(listaAudios, datas, srs):
     #     saveSpectograms(losAudios, datos, senales)
-    print("Espectogramas generados")
+    # print("Espectogramas generados")
     print("Generando Espectogramas tipo mel")
-    for losAudios, datos, senales in zip(listaAudios, datas, srs):
+    for losAudios, datos, senales in zip(listaAudios, posDatas, srs):
         melSpectograms(losAudios, datos, senales)
     print("Espectogramas tipo mel generados")
 
