@@ -26,7 +26,7 @@ from keras.models import Sequential
 import warnings
 
 
-def df_to_dataset(dataframe, shuffle=True, batch_size=32):
+def df_to_dataset(dataframe, shuffle=False, batch_size=5):
   dataframe = dataframe.copy()
   labels = dataframe.pop('target')
   ds = tf.data.Dataset.from_tensor_slices((dict(dataframe), labels))
@@ -51,15 +51,15 @@ def modelito(audioFeatures, numberLabels):
     print(audioFeatures['target'])
 
     batch_size = 5 
-    train_ds = df_to_dataset(train, batch_size=batch_size)
+    train_ds = df_to_dataset(train, shuffle=True, batch_size=batch_size)
     print(train_ds)
     val_ds = df_to_dataset(val, shuffle=False, batch_size=batch_size)
     test_ds = df_to_dataset(test, shuffle=False, batch_size=batch_size)
 
     # for feature_batch, label_batch in train_ds.take(1):
     #     print('Every feature:', list(feature_batch.keys()))
-        # print('A batch of files:', feature_batch['filename'])
-        # print('A batch of targets:', label_batch)
+    #     print('A batch of files:', feature_batch['filename'])
+    #     print('A batch of targets:', label_batch)
 
     # audioFeatures.head()# Dropping unneccesary columns
     # audioFeatures = audioFeatures.drop(['filename'],axis=1)#Encoding the Labels
