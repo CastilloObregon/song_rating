@@ -26,20 +26,22 @@ from keras.models import Sequential
 import warnings
 
 
-def df_to_dataset(dataframe, shuffle=False, batch_size=5):
-  dataframe = dataframe.copy()
-  labels = dataframe.pop('target')
-  ds = tf.data.Dataset.from_tensor_slices((dict(dataframe), labels))
-  if shuffle:
-    ds = ds.shuffle(buffer_size=len(dataframe))
-  ds = ds.batch(batch_size)
-  return ds
+def df_to_dataset(dataframe, shuffle=True, batch_size=32):
+    dataframe = dataframe.copy()
+    labels = dataframe.pop('target')
+    ds = tf.data.Dataset.from_tensor_slices((dict(dataframe), labels))
+    if shuffle:
+        ds = ds.shuffle(buffer_size=len(dataframe))
+    ds = ds.batch(batch_size)
+    return ds
+
 
 def modelito(audioFeatures, numberLabels):
 
-    audioFeatures['target'] = np.where(audioFeatures['labelNum']==2, 1, 0)
+    audioFeatures['target'] = np.where(audioFeatures['labelNum'] == 2, 1, 0)
 
-    audioFeatures = audioFeatures.drop(columns=['label', 'labelNum'])
+    audioFeatures = audioFeatures.drop(
+        columns=['filename', 'label', 'labelNum'])
 
     train, test = train_test_split(audioFeatures, test_size=0.2)
     train, val = train_test_split(train, test_size=0.2)
@@ -48,24 +50,33 @@ def modelito(audioFeatures, numberLabels):
     print(len(val), 'validation examples')
     print(len(test), 'test examples')
 
-    print(audioFeatures['target'])
+    # print(audioFeatures['target'])
 
-    batch_size = 5 
-    train_ds = df_to_dataset(train, shuffle=True, batch_size=batch_size)
-    print(train_ds)
+    batch_size = 5
+    train_ds = df_to_dataset(train, batch_size=batch_size)
+
     val_ds = df_to_dataset(val, shuffle=False, batch_size=batch_size)
     test_ds = df_to_dataset(test, shuffle=False, batch_size=batch_size)
+    # print(train_ds.take(1))
 
-    # for feature_batch, label_batch in train_ds.take(1):
-    #     print('Every feature:', list(feature_batch.keys()))
-    #     print('A batch of files:', feature_batch['filename'])
-    #     print('A batch of targets:', label_batch)
+    for feature_batch, label_batch in train_ds.take(1):
+        print('Every feature:', list(feature_batch.keys()))
+        print('A batch of files:', feature_batch['chroma_stft'])
+        print('A batch of targets:', label_batch)
+
+    example_batch = next(iter(train_ds))[0]
+
+    def demo(feature_column):
+        feature_layer = layers.DenseFeatures(feature_column)
+        print(feature_layer(example_batch).numpy())
+
+    photo_count = feature_column.numeric_column('chroma_stft')
+    demo(photo_count)
 
     # audioFeatures.head()# Dropping unneccesary columns
     # audioFeatures = audioFeatures.drop(['filename'],axis=1)#Encoding the Labels
 
     # rating_list = data.iloc[:, -1]
-
 
     # y = label_encoder.fit_transform(rating_list)#Scaling the Feature columns
 
@@ -73,8 +84,6 @@ def modelito(audioFeatures, numberLabels):
 
     # X = scaler.fit_transform(np.array(data.iloc[:, :-1], dtype = float))#Dividing data into training and Testing set
     # X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
-
-
 
 
 def main():
@@ -98,4 +107,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
