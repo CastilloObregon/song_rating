@@ -36,7 +36,7 @@ def df_to_dataset(dataframe, shuffle=True, batch_size=32):
     return ds
 
 
-def modelito(audioFeatures, numberLabels):
+def modelito(audioFeatures, numberLabels, columnas):
 
     audioFeatures['target'] = np.where(audioFeatures['labelNum'] == 2, 1, 0)
 
@@ -64,14 +64,7 @@ def modelito(audioFeatures, numberLabels):
         print('A batch of files:', feature_batch['chroma_stft'])
         print('A batch of targets:', label_batch)
 
-    example_batch = next(iter(train_ds))[0]
-
-    def demo(feature_column):
-        feature_layer = layers.DenseFeatures(feature_column)
-        print(feature_layer(example_batch).numpy())
-
-    photo_count = feature_column.numeric_column('chroma_stft')
-    demo(photo_count)
+    
 
     # audioFeatures.head()# Dropping unneccesary columns
     # audioFeatures = audioFeatures.drop(['filename'],axis=1)#Encoding the Labels
@@ -90,9 +83,10 @@ def main():
     features = pd.read_csv(r'dataset.csv')
     audioFeatures = pd.DataFrame(features)
 
-    featuresFixed = features.iloc[:, 0:27]
-
-    print(audioFeatures.head())
+    featuresFixed = features.iloc[:, 1:27]
+    columnsNames = list(featuresFixed.columns.values)
+     
+    # print(audioFeatures.head())
 
     label_encoder = LabelEncoder()
     true_labels = label_encoder.fit_transform(audioFeatures[['label']])
@@ -102,7 +96,7 @@ def main():
     print(true_labels)
     print("Labels disponibles: ", n_clusters)
 
-    modelito(audioFeatures, true_labels)
+    modelito(audioFeatures, true_labels, columnsNames)
 
 
 if __name__ == "__main__":
