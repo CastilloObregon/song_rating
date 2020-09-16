@@ -34,48 +34,69 @@ def df_to_dataset(dataframe, shuffle=True, batch_size=32):
         ds = ds.shuffle(buffer_size=len(dataframe))
     ds = ds.batch(batch_size)
     return ds
+    print("Somos labels: ", labels)
 
 
-def modelito(audioFeatures, numberLabels, columnas):
+def modelito(audioFeatures):
 
-    audioFeatures['target'] = np.where(audioFeatures['labelNum'] == 2, 1, 0)
-    # audioFeatures['target'] = audioFeatures['label']
+    # audioFeatures['target'] = np.where(audioFeatures['labelNum'] == 2, 1, 0)
 
     audioFeatures = audioFeatures.drop(
-        columns=['filename', 'labelNum'])
+        columns=['filename', 'label'])
 
-    losLabels = audioFeatures['label']
-    train, test = train_test_split(audioFeatures, test_size=0.2)
-    train, val = train_test_split(train, test_size=0.20)
+    print(audioFeatures["labelNum"])
 
-    # print(len(train), 'train examples')
-    # print(len(val), 'validation examples')
-    # print(len(test), 'test examples')
+    feature_columns = []
+    
+    chroma_stft = tf.feature_column.numeric_column("chroma_stft")
+    rmse = tf.feature_column.numeric_column("rmse")
+    spectral_centroid = tf.feature_column.numeric_column("spectral_centroid")
+    spectral_bandwidth = tf.feature_column.numeric_column("spectral_bandwidth")
+    zero_crossing_rate = tf.feature_column.numeric_column("zero_crossing_rate")
+
+    mfcc1 = tf.feature_column.numeric_column("mfcc1")
+    mfcc2 = tf.feature_column.numeric_column("mfcc2")
+    mfcc3 = tf.feature_column.numeric_column("mfcc3")
+    mfcc4 = tf.feature_column.numeric_column("mfcc4")
+    mfcc5 = tf.feature_column.numeric_column("mfcc5")
+    mfcc6 = tf.feature_column.numeric_column("mfcc6")
+    mfcc7 = tf.feature_column.numeric_column("mfcc7")
+    mfcc8 = tf.feature_column.numeric_column("mfcc8")
+    mfcc9 = tf.feature_column.numeric_column("mfcc9")
+    mfcc10 = tf.feature_column.numeric_column("mfcc10")
+    mfcc11 = tf.feature_column.numeric_column("mfcc11")
+    mfcc12 = tf.feature_column.numeric_column("mfcc12")
+    mfcc13 = tf.feature_column.numeric_column("mfcc13")
+    mfcc14 = tf.feature_column.numeric_column("mfcc14")
+    mfcc15 = tf.feature_column.numeric_column("mfcc15")
+    mfcc16 = tf.feature_column.numeric_column("mfcc16")
+    mfcc17 = tf.feature_column.numeric_column("mfcc17")
+    mfcc18 = tf.feature_column.numeric_column("mfcc18")
+    mfcc19 = tf.feature_column.numeric_column("mfcc19")
+    mfcc20 = tf.feature_column.numeric_column("mfcc20")
+
+    # labelClass = tf.feature_column.categorical_column_with_hash_bucket("label", hash_bucket_size=10)
+
+    feature_columns = [chroma_stft, rmse, spectral_centroid, spectral_bandwidth, zero_crossing_rate, mfcc1, mfcc2, mfcc3, mfcc4, mfcc5, mfcc6, mfcc7,
+    mfcc8, mfcc9, mfcc10, mfcc11, mfcc12, mfcc13, mfcc14, mfcc15, mfcc16,mfcc17,mfcc18, mfcc19, mfcc20]
+    
+    # audioFeatures = audioFeatures.values.ravel()
+
+    # X_data = audioFeatures.drop("label")
+    # losLabels = audioFeatures["label"]
+
+    X_train, X_test, Y_train, Y_test = train_test_split(X_data, losLabels, test_size=0.2)
+    # train, val = train_test_split(train, test_size=0.20)
+
+    print(len(X_data), ' all data')
+    print(len(X_train), ' train examples')
+    print(len(X_test), 'validation examples')
+    print(len(Y_train), 'test examples')
+    print(len(Y_test), 'test examples')
 
     # print(audioFeatures['target'])
 
-    batch_size = 5
-    train_ds = df_to_dataset(train, batch_size=batch_size)
-    val_ds = df_to_dataset(val, shuffle=False, batch_size=batch_size)
-    test_ds = df_to_dataset(test, shuffle=False, batch_size=batch_size)
-    # print(train_ds.take(1))
-
-    # for feature_batch, label_batch in train_ds.take(1):
-    #     print('Every feature:', list(feature_batch.keys()))
-    #     print('A batch of files:', feature_batch['chroma_stft'])
-    #     print('A batch of targets:', label_batch)
-
-    feature_columns = []
-    # print(columnas)
-    for header in columnas:
-      feature_columns.append(feature_column.numeric_column(header))
-    
-    # label1 = feature_column.categorical_column_with_vocabulary_list(
-    #     'label', audioFeatures.label.unique())   
-    # label1_embedding = feature_column.embedding_column(label1, dimension=8)
-    # feature_columns.append(label1_embedding)
-
-    
+    """
     feature_layer = tf.keras.layers.DenseFeatures(feature_columns)
 
     batch_size = 32
@@ -83,7 +104,7 @@ def modelito(audioFeatures, numberLabels, columnas):
     val_ds = df_to_dataset(val, shuffle=False, batch_size=batch_size)
     test_ds = df_to_dataset(test, shuffle=False, batch_size=batch_size)
 
-
+    
     model = tf.keras.Sequential([
       feature_layer,
       layers.Dense(128, activation='relu'),
@@ -110,33 +131,38 @@ def modelito(audioFeatures, numberLabels, columnas):
               validation_data=val_ds,
               epochs=40)
 
+    # print(test_ds)
     loss, accuracy = model.evaluate(test_ds)
     print("Accuracy", accuracy)
 
+    predictions = model.predict(test_ds)
+    print("Prediction", predictions)
+
     # !ls {checkpoint_dir}
-    
+    """
 
 
 
 
 def main():
     features = pd.read_csv(r'dataset.csv')
-    audioFeatures = pd.DataFrame(features)
+    # features = pd.DataFrame(features)
+    # features = features.values.ravel()
 
-    featuresFixed = features.iloc[:, 1:27]
-    columnsNames = list(featuresFixed.columns.values)
+    # featuresFixed = features.iloc[:, 1:28]
+    # columnsNames = list(featuresFixed.columns.values)
      
     # print(audioFeatures.head())
 
-    label_encoder = LabelEncoder()
-    true_labels = label_encoder.fit_transform(audioFeatures[['label']])
+    # label_encoder = LabelEncoder()
+    # true_labels = label_encoder.fit_transform(features[['label']])
 
-    n_clusters = len(label_encoder.classes_)
+    # n_clusters = len(label_encoder.classes_)
 
     # print(true_labels)
     # print("Labels disponibles: ", n_clusters)
 
-    modelito(audioFeatures, true_labels, columnsNames)
+    modelito(features)
 
 
 if __name__ == "__main__":

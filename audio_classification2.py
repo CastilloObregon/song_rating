@@ -48,7 +48,11 @@ def main():
     # print("Labels disponibles: ", n_clusters)
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
-
+    print(
+        "=========== xtrain ==============="
+    )
+    print(X_train.shape[1])
+    print(y_test.shape[1])
     model = Sequential()
     model.add(layers.Dense(256, activation='relu', input_shape=(X_train.shape[1],)))
     model.add(layers.Dense(128, activation='relu'))
@@ -58,10 +62,18 @@ def main():
                 loss='sparse_categorical_crossentropy',
                 metrics=['accuracy'])
 
-    classifier = model.fit(X_train,
+    model.fit(X_train,
                     y_train,
-                    epochs=100,
+                    epochs=40,
                     batch_size=128)
+
+    # print(x)
+
+    loss, accuracy = model.evaluate(X_test)
+    print("Accuracy es: ", accuracy)
+
+    predictions = model.predict(X_test)
+    print("Prediction", predictions)
 
 
 
