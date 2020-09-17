@@ -37,7 +37,7 @@ feAceptables = list(data_dir.glob('Aceptables/*'))
 refPic5 = PIL.Image.open(str(feAceptables[0]))
 # refPic5.show()
 
-batch_size = 32
+batch_size = 16
 img_height = 180
 img_width = 180
 
