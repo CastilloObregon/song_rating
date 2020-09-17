@@ -147,6 +147,8 @@ plt.title('Training and Validation Loss')
 plt.show()
 
 
+model.save('Training/my_model') 
+
 # data_augmentation = keras.Sequential(
 #   [
 #     layers.experimental.preprocessing.RandomFlip("horizontal", 
