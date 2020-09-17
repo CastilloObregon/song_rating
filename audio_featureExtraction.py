@@ -121,16 +121,17 @@ def saveWaveplots(audioName, theData, theSr):
 def saveSpectograms(audioName, theData, theSr):
     X = librosa.stft(theData)
     Xdb = librosa.amplitude_to_db(abs(X))
-    plt.figure(figsize=(14, 5))
     librosa.display.specshow(Xdb, sr=theSr, x_axis='time', y_axis='hz')
     # plt.colorbar()
     # plt.show()
     filename = 'Images/Espectogramas/Hz/' + str(audioName) + '.png'
     plt.savefig(filename)
+    plt.clf()
     librosa.display.specshow(Xdb, sr=theSr, x_axis='time', y_axis='log')
     # plt.show()
     filename2 = 'Images/Espectogramas/Log/' + str(audioName) + '.png'
     plt.savefig(filename2)
+    plt.clf()
 
 # @jit(target ="cuda")
 
@@ -202,10 +203,10 @@ def main():
     for losAudios, datos, senales in zip(listaAudios, posDatas, srs):
         saveWaveplots(losAudios, datos, senales)
     print("Waveplots generados")
-    # print("Generando Espectogramas")
-    # for losAudios, datos, senales in zip(listaAudios, datas, srs):
-    #     saveSpectograms(losAudios, datos, senales)
-    # print("Espectogramas generados")
+    print("Generando Espectogramas")
+    for losAudios, datos, senales in zip(listaAudios, datas, srs):
+        saveSpectograms(losAudios, datos, senales)
+    print("Espectogramas generados")
     print("Generando Espectogramas tipo mel")
     for losAudios, datos, senales in zip(listaAudios, posDatas, srs):
         melSpectograms(losAudios, datos, senales)

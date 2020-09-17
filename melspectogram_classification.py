@@ -134,16 +134,16 @@ epochs_range = range(epochs)
 
 plt.figure(figsize=(8, 8))
 plt.subplot(1, 2, 1)
-plt.plot(epochs_range, acc, label='Training Accuracy')
-plt.plot(epochs_range, val_acc, label='Validation Accuracy')
+plt.plot(epochs_range, acc, label='Exactitud de entrenamiento')
+plt.plot(epochs_range, val_acc, label='Exactitud de validación')
 plt.legend(loc='lower right')
-plt.title('Training and Validation Accuracy')
+plt.title('Exactitud del entrenamiento y validación')
 
 plt.subplot(1, 2, 2)
-plt.plot(epochs_range, loss, label='Training Loss')
-plt.plot(epochs_range, val_loss, label='Validation Loss')
+plt.plot(epochs_range, loss, label='Pérdida de entrenamiento')
+plt.plot(epochs_range, val_loss, label='Pérdida de validación')
 plt.legend(loc='upper right')
-plt.title('Training and Validation Loss')
+plt.title('Pérdida de entrenamiento y validación')
 plt.show()
 
 
@@ -239,6 +239,6 @@ predictions = model.predict(img_array)
 score = tf.nn.softmax(predictions[0])
 
 print(
-    "This image most likely belongs to {} with a {:.2f} percent confidence."
+    "Este audio es de la categoría {} con un {:.2f} porcentaje de confianza."
     .format(class_names[np.argmax(score)], 100 * np.max(score))
 )
