@@ -116,7 +116,7 @@ model.summary()
 
 
 # ======= ENTRENAMIENTO ===========
-epochs=10
+epochs=40
 history = model.fit(
   train_ds,
   validation_data=val_ds,
