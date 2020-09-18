@@ -17,26 +17,26 @@ image_count = len(list(data_dir.glob('*/*.png')))
 print(image_count)
 
 feBuenas = list(data_dir.glob('Buenas/*'))
-refPic1 = PIL.Image.open(str(feBuenas[0]))
+# refPic1 = PIL.Image.open(str(feBuenas[0]))
 # refPic1.show()
 
 feExcelentes = list(data_dir.glob('Excelentes/*'))
-refPic2 = PIL.Image.open(str(feExcelentes[0]))
+# refPic2 = PIL.Image.open(str(feExcelentes[0]))
 # refPic2.show()
 
 feMalas = list(data_dir.glob('Malas/*'))
-refPic3 = PIL.Image.open(str(feMalas[0]))
+# refPic3 = PIL.Image.open(str(feMalas[0]))
 # refPic3.show()
 
 feProfesionales = list(data_dir.glob('Profesionales/*'))
-refPic4 = PIL.Image.open(str(feProfesionales[0]))
+# refPic4 = PIL.Image.open(str(feProfesionales[0]))
 # refPic4.show()
 
 feAceptables = list(data_dir.glob('Aceptables/*'))
-refPic5 = PIL.Image.open(str(feAceptables[0]))
+# refPic5 = PIL.Image.open(str(feAceptables[0]))
 # refPic5.show()
 
-batch_size = 16
+batch_size = 100
 img_height = 180
 img_width = 180
 
@@ -94,24 +94,24 @@ print(np.min(first_image), np.max(first_image))
 # ========= MODELO =======
 num_classes = 5
 
-# model = Sequential([
-#   layers.experimental.preprocessing.Rescaling(1./255, input_shape=(img_height, img_width, 3)),
-#   layers.Conv2D(16, 3, padding='same', activation='relu'),
-#   layers.MaxPooling2D(),
-#   layers.Conv2D(32, 3, padding='same', activation='relu'),
-#   layers.MaxPooling2D(),
-#   layers.Conv2D(64, 3, padding='same', activation='relu'),
-#   layers.MaxPooling2D(),
-#   layers.Flatten(),
-#   layers.Dense(128, activation='relu'),
-#   layers.Dense(num_classes)
-# ])
+model = Sequential([
+  layers.experimental.preprocessing.Rescaling(1./255, input_shape=(img_height, img_width, 3)),
+  layers.Conv2D(16, 3, padding='same', activation='relu'),
+  layers.MaxPooling2D(),
+  layers.Conv2D(32, 3, padding='same', activation='relu'),
+  layers.MaxPooling2D(),
+  layers.Conv2D(64, 3, padding='same', activation='relu'),
+  layers.MaxPooling2D(),
+  layers.Flatten(),
+  layers.Dense(128, activation='relu'),
+  layers.Dense(num_classes)
+])
 
-# model.compile(optimizer='adam',
-#               loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
-#               metrics=['accuracy'])
+model.compile(optimizer='adam',
+              loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
+              metrics=['accuracy'])
 
-# model.summary()
+model.summary()
 
 # ==== Para checkpoints =======
 checkpoint_path = "Training/Checkpoints/cp.ckpt"
@@ -122,49 +122,49 @@ cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath=checkpoint_path,
                                                  verbose=1)
 
 # ======= ENTRENAMIENTO ===========
-# epochs=40
-# history = model.fit(
-#   train_ds,
-#   validation_data=val_ds,
-#   epochs=epochs,
-#   callbacks=[cp_callback]
-# )
+epochs=40
+history = model.fit(
+  train_ds,
+  validation_data=val_ds,
+  epochs=epochs,
+  callbacks=[cp_callback]
+)
 
 
-# acc = history.history['accuracy']
-# val_acc = history.history['val_accuracy']
+acc = history.history['accuracy']
+val_acc = history.history['val_accuracy']
 
-# loss=history.history['loss']
-# val_loss=history.history['val_loss']
+loss=history.history['loss']
+val_loss=history.history['val_loss']
 
-# epochs_range = range(epochs)
+epochs_range = range(epochs)
 
-# plt.figure(figsize=(8, 8))
-# plt.subplot(1, 2, 1)
-# plt.plot(epochs_range, acc, label='Exactitud de entrenamiento')
-# plt.plot(epochs_range, val_acc, label='Exactitud de validación')
-# plt.legend(loc='lower right')
-# plt.title('Exactitud del entrenamiento y validación')
+plt.figure(figsize=(8, 8))
+plt.subplot(1, 2, 1)
+plt.plot(epochs_range, acc, label='Exactitud de entrenamiento')
+plt.plot(epochs_range, val_acc, label='Exactitud de validación')
+plt.legend(loc='lower right')
+plt.title('Exactitud del entrenamiento y validación')
 
-# plt.subplot(1, 2, 2)
-# plt.plot(epochs_range, loss, label='Pérdida de entrenamiento')
-# plt.plot(epochs_range, val_loss, label='Pérdida de validación')
-# plt.legend(loc='upper right')
-# plt.title('Pérdida de entrenamiento y validación')
-# plt.show()
+plt.subplot(1, 2, 2)
+plt.plot(epochs_range, loss, label='Pérdida de entrenamiento')
+plt.plot(epochs_range, val_loss, label='Pérdida de validación')
+plt.legend(loc='upper right')
+plt.title('Pérdida de entrenamiento y validación')
+plt.show()
 
  
 
-data_augmentation = keras.Sequential(
-  [
-    layers.experimental.preprocessing.RandomFlip("horizontal", 
-                                                 input_shape=(img_height, 
-                                                              img_width,
-                                                              3)),
-    layers.experimental.preprocessing.RandomRotation(0.1),
-    layers.experimental.preprocessing.RandomZoom(0.1),
-  ]
-)
+# data_augmentation = keras.Sequential(
+#   [
+#     layers.experimental.preprocessing.RandomFlip("horizontal", 
+#                                                  input_shape=(img_height, 
+#                                                               img_width,
+#                                                               3)),
+#     layers.experimental.preprocessing.RandomRotation(0.1),
+#     layers.experimental.preprocessing.RandomZoom(0.1),
+#   ]
+# )
 
 # plt.figure(figsize=(10, 10))
 # for images, _ in train_ds.take(1):
@@ -176,60 +176,60 @@ data_augmentation = keras.Sequential(
 
 # plt.show()
 
-model = Sequential([
-  data_augmentation,
-  layers.experimental.preprocessing.Rescaling(1./255),
-  layers.Conv2D(16, 3, padding='same', activation='relu'),
-  layers.MaxPooling2D(),
-  layers.Conv2D(32, 3, padding='same', activation='relu'),
-  layers.MaxPooling2D(),
-  layers.Conv2D(64, 3, padding='same', activation='relu'),
-  layers.MaxPooling2D(),
-  layers.Dropout(0.2),
-  layers.Flatten(),
-  layers.Dense(128, activation='relu'),
-  layers.Dense(num_classes)
-])
+# model = Sequential([
+#   data_augmentation,
+#   layers.experimental.preprocessing.Rescaling(1./255),
+#   layers.Conv2D(16, 3, padding='same', activation='relu'),
+#   layers.MaxPooling2D(),
+#   layers.Conv2D(32, 3, padding='same', activation='relu'),
+#   layers.MaxPooling2D(),
+#   layers.Conv2D(64, 3, padding='same', activation='relu'),
+#   layers.MaxPooling2D(),
+#   layers.Dropout(0.2),
+#   layers.Flatten(),
+#   layers.Dense(128, activation='relu'),
+#   layers.Dense(num_classes)
+# ])
 
 
-model.compile(optimizer='adam',
-              loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
-              metrics=['accuracy'])
+# model.compile(optimizer='adam',
+#               loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
+#               metrics=['accuracy'])
 
-model.summary()
+# model.summary()
 
-epochs = 100
-history = model.fit(
-  train_ds,
-  validation_data=val_ds,
-  epochs=epochs
-)
+# epochs = 100
+# history = model.fit(
+#   train_ds,
+#   validation_data=val_ds,
+#   epochs=epochs
+# )
 
-acc = history.history['accuracy']
-val_acc = history.history['val_accuracy']
+# acc = history.history['accuracy']
+# val_acc = history.history['val_accuracy']
 
-loss = history.history['loss']
-val_loss = history.history['val_loss']
+# loss = history.history['loss']
+# val_loss = history.history['val_loss']
 
-epochs_range = range(epochs)
+# epochs_range = range(epochs)
 
-plt.figure(figsize=(8, 8))
-plt.subplot(1, 2, 1)
-plt.plot(epochs_range, acc, label='Training Accuracy')
-plt.plot(epochs_range, val_acc, label='Validation Accuracy')
-plt.legend(loc='lower right')
-plt.title('Training and Validation Accuracy')
+# plt.figure(figsize=(8, 8))
+# plt.subplot(1, 2, 1)
+# plt.plot(epochs_range, acc, label='Training Accuracy')
+# plt.plot(epochs_range, val_acc, label='Validation Accuracy')
+# plt.legend(loc='lower right')
+# plt.title('Training and Validation Accuracy')
 
-plt.subplot(1, 2, 2)
-plt.plot(epochs_range, loss, label='Training Loss')
-plt.plot(epochs_range, val_loss, label='Validation Loss')
-plt.legend(loc='upper right')
-plt.title('Training and Validation Loss')
-plt.show()
+# plt.subplot(1, 2, 2)
+# plt.plot(epochs_range, loss, label='Training Loss')
+# plt.plot(epochs_range, val_loss, label='Validation Loss')
+# plt.legend(loc='upper right')
+# plt.title('Training and Validation Loss')
+# plt.show()
 
 model.save('Training/Modelo')
 
-data_dir_pruebas = pathlib.Path('Images/Tests/Fur_elise_61.wav.png')
+data_dir_pruebas = pathlib.Path('Images/Tests/output38.png')
 
 img = keras.preprocessing.image.load_img(
     data_dir_pruebas, target_size=(img_height, img_width)
@@ -244,3 +244,4 @@ print(
     "Este audio es de la categoría {} con un {:.2f} porcentaje de confianza."
     .format(class_names[np.argmax(score)], 100 * np.max(score))
 )
+

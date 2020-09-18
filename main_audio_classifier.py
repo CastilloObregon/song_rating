@@ -87,7 +87,7 @@ def recordAudio(recNum):
 
 def audioFeatures(audioFile):
     data, sr = librosa.load(audioFile, sr=44100)
-    dataRms, ind = librosa.effects.trim(data, top_db=25)
+    dataRms, ind = librosa.effects.trim(data, top_db=15)
     rmsShape = dataRms.shape
     dataShape = data.shape
 
