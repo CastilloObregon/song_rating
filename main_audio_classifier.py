@@ -33,6 +33,17 @@ import warnings
 
 from pathlib import Path
 
+import matplotlib.pyplot as plt
+
+import PIL
+import tensorflow as tf
+
+from tensorflow import keras
+from tensorflow.keras import layers
+from tensorflow.keras.models import Sequential
+
+
+
 
 def nextAudio():
     
@@ -53,7 +64,7 @@ def recordAudio(recNum):
     print(recNum)
     file_number = int(recNum)+1
     fs = 44100  # Sample rate
-    seconds = 2  # Duracion de la grabacion
+    seconds = 15  # Duracion de la grabacion
 
     grabacion = sd.rec(int(seconds * fs), samplerate=fs, channels=1)
     print("Antes de grabar el audio asegurese de no hacer ruido antes y despues de grabar.")
@@ -64,6 +75,7 @@ def recordAudio(recNum):
     time.sleep(1)
     print("1..")
     time.sleep(1)
+    print("Ya.")
     print("Grabando 15 segundos de audio...")
     sd.wait()  # Wait until recording is finished
     print("Grabacion terminada con exito.")
@@ -115,6 +127,30 @@ def melSpectograms(audioName, theData, theSr):
 
     return filename2
 
+
+def modelExecution(data_dir_pruebas):
+    batch_size = 16
+    img_height = 180
+    img_width = 180
+
+    class_names = ['Aceptables', 'Buenas', 'Excelentes', 'Malas', 'Profesionales']
+
+    el_modelo = tf.keras.models.load_model('Training/Modelo')
+
+    el_modelo.summary()
+
+    img = keras.preprocessing.image.load_img(data_dir_pruebas, target_size=(img_height, img_width))
+    img_array = keras.preprocessing.image.img_to_array(img)
+    img_array = tf.expand_dims(img_array, 0) # Create a batch
+
+    predictions = el_modelo.predict(img_array)
+    score = tf.nn.softmax(predictions[0])
+
+    print(
+        "Este audio es de la categoría {} con un {:.2f} porcentaje de confianza."
+        .format(class_names[np.argmax(score)], 100 * np.max(score))
+    )
+
 def main():
 
     fileNumber = nextAudio()
@@ -133,7 +169,11 @@ def main():
     # ========== Get mel spetrograms
     mel_dir = melSpectograms(audio_name, dataRms, elSr)
 
-    print(waveplot_dir, mel_dir)
+    data_dir = pathlib.Path(mel_dir)
+    data_dir_wp = pathlib.Path(waveplot_dir)
+
+    modelExecution(data_dir)
+
 
 
 if __name__ == "__main__":

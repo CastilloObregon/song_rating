@@ -10,8 +10,6 @@ from tensorflow.keras.models import Sequential
 
 import pathlib
 
-import matplotlib.pyplot as plt
-
 
 data_dir = pathlib.Path('Images/Training')
 
@@ -96,70 +94,77 @@ print(np.min(first_image), np.max(first_image))
 # ========= MODELO =======
 num_classes = 5
 
-model = Sequential([
-  layers.experimental.preprocessing.Rescaling(1./255, input_shape=(img_height, img_width, 3)),
-  layers.Conv2D(16, 3, padding='same', activation='relu'),
-  layers.MaxPooling2D(),
-  layers.Conv2D(32, 3, padding='same', activation='relu'),
-  layers.MaxPooling2D(),
-  layers.Conv2D(64, 3, padding='same', activation='relu'),
-  layers.MaxPooling2D(),
-  layers.Flatten(),
-  layers.Dense(128, activation='relu'),
-  layers.Dense(num_classes)
-])
+# model = Sequential([
+#   layers.experimental.preprocessing.Rescaling(1./255, input_shape=(img_height, img_width, 3)),
+#   layers.Conv2D(16, 3, padding='same', activation='relu'),
+#   layers.MaxPooling2D(),
+#   layers.Conv2D(32, 3, padding='same', activation='relu'),
+#   layers.MaxPooling2D(),
+#   layers.Conv2D(64, 3, padding='same', activation='relu'),
+#   layers.MaxPooling2D(),
+#   layers.Flatten(),
+#   layers.Dense(128, activation='relu'),
+#   layers.Dense(num_classes)
+# ])
 
-model.compile(optimizer='adam',
-              loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
-              metrics=['accuracy'])
+# model.compile(optimizer='adam',
+#               loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
+#               metrics=['accuracy'])
 
-model.summary()
+# model.summary()
 
+# ==== Para checkpoints =======
+checkpoint_path = "Training/Checkpoints/cp.ckpt"
+checkpoint_dir = os.path.dirname(checkpoint_path)
+
+cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath=checkpoint_path,
+                                                 save_weights_only=True,
+                                                 verbose=1)
 
 # ======= ENTRENAMIENTO ===========
-epochs=40
-history = model.fit(
-  train_ds,
-  validation_data=val_ds,
-  epochs=epochs
-)
-
-
-acc = history.history['accuracy']
-val_acc = history.history['val_accuracy']
-
-loss=history.history['loss']
-val_loss=history.history['val_loss']
-
-epochs_range = range(epochs)
-
-plt.figure(figsize=(8, 8))
-plt.subplot(1, 2, 1)
-plt.plot(epochs_range, acc, label='Exactitud de entrenamiento')
-plt.plot(epochs_range, val_acc, label='Exactitud de validación')
-plt.legend(loc='lower right')
-plt.title('Exactitud del entrenamiento y validación')
-
-plt.subplot(1, 2, 2)
-plt.plot(epochs_range, loss, label='Pérdida de entrenamiento')
-plt.plot(epochs_range, val_loss, label='Pérdida de validación')
-plt.legend(loc='upper right')
-plt.title('Pérdida de entrenamiento y validación')
-plt.show()
-
-
-model.save('Training/my_model') 
-
-# data_augmentation = keras.Sequential(
-#   [
-#     layers.experimental.preprocessing.RandomFlip("horizontal", 
-#                                                  input_shape=(img_height, 
-#                                                               img_width,
-#                                                               3)),
-#     layers.experimental.preprocessing.RandomRotation(0.1),
-#     layers.experimental.preprocessing.RandomZoom(0.1),
-#   ]
+# epochs=40
+# history = model.fit(
+#   train_ds,
+#   validation_data=val_ds,
+#   epochs=epochs,
+#   callbacks=[cp_callback]
 # )
+
+
+# acc = history.history['accuracy']
+# val_acc = history.history['val_accuracy']
+
+# loss=history.history['loss']
+# val_loss=history.history['val_loss']
+
+# epochs_range = range(epochs)
+
+# plt.figure(figsize=(8, 8))
+# plt.subplot(1, 2, 1)
+# plt.plot(epochs_range, acc, label='Exactitud de entrenamiento')
+# plt.plot(epochs_range, val_acc, label='Exactitud de validación')
+# plt.legend(loc='lower right')
+# plt.title('Exactitud del entrenamiento y validación')
+
+# plt.subplot(1, 2, 2)
+# plt.plot(epochs_range, loss, label='Pérdida de entrenamiento')
+# plt.plot(epochs_range, val_loss, label='Pérdida de validación')
+# plt.legend(loc='upper right')
+# plt.title('Pérdida de entrenamiento y validación')
+# plt.show()
+
+ 
+
+data_augmentation = keras.Sequential(
+  [
+    layers.experimental.preprocessing.RandomFlip("horizontal", 
+                                                 input_shape=(img_height, 
+                                                              img_width,
+                                                              3)),
+    layers.experimental.preprocessing.RandomRotation(0.1),
+    layers.experimental.preprocessing.RandomZoom(0.1),
+  ]
+)
 
 # plt.figure(figsize=(10, 10))
 # for images, _ in train_ds.take(1):
@@ -171,65 +176,61 @@ model.save('Training/my_model')
 
 # plt.show()
 
-# model = Sequential([
-#   data_augmentation,
-#   layers.experimental.preprocessing.Rescaling(1./255),
-#   layers.Conv2D(16, 3, padding='same', activation='relu'),
-#   layers.MaxPooling2D(),
-#   layers.Conv2D(32, 3, padding='same', activation='relu'),
-#   layers.MaxPooling2D(),
-#   layers.Conv2D(64, 3, padding='same', activation='relu'),
-#   layers.MaxPooling2D(),
-#   layers.Dropout(0.2),
-#   layers.Flatten(),
-#   layers.Dense(128, activation='relu'),
-#   layers.Dense(num_classes)
-# ])
+model = Sequential([
+  data_augmentation,
+  layers.experimental.preprocessing.Rescaling(1./255),
+  layers.Conv2D(16, 3, padding='same', activation='relu'),
+  layers.MaxPooling2D(),
+  layers.Conv2D(32, 3, padding='same', activation='relu'),
+  layers.MaxPooling2D(),
+  layers.Conv2D(64, 3, padding='same', activation='relu'),
+  layers.MaxPooling2D(),
+  layers.Dropout(0.2),
+  layers.Flatten(),
+  layers.Dense(128, activation='relu'),
+  layers.Dense(num_classes)
+])
 
 
-# model.compile(optimizer='adam',
-#               loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
-#               metrics=['accuracy'])
+model.compile(optimizer='adam',
+              loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
+              metrics=['accuracy'])
 
-# model.summary()
+model.summary()
 
-# epochs = 15
-# history = model.fit(
-#   train_ds,
-#   validation_data=val_ds,
-#   epochs=epochs
-# )
+epochs = 100
+history = model.fit(
+  train_ds,
+  validation_data=val_ds,
+  epochs=epochs
+)
 
-# acc = history.history['accuracy']
-# val_acc = history.history['val_accuracy']
+acc = history.history['accuracy']
+val_acc = history.history['val_accuracy']
 
-# loss = history.history['loss']
-# val_loss = history.history['val_loss']
+loss = history.history['loss']
+val_loss = history.history['val_loss']
 
-# epochs_range = range(epochs)
+epochs_range = range(epochs)
 
-# plt.figure(figsize=(8, 8))
-# plt.subplot(1, 2, 1)
-# plt.plot(epochs_range, acc, label='Training Accuracy')
-# plt.plot(epochs_range, val_acc, label='Validation Accuracy')
-# plt.legend(loc='lower right')
-# plt.title('Training and Validation Accuracy')
+plt.figure(figsize=(8, 8))
+plt.subplot(1, 2, 1)
+plt.plot(epochs_range, acc, label='Training Accuracy')
+plt.plot(epochs_range, val_acc, label='Validation Accuracy')
+plt.legend(loc='lower right')
+plt.title('Training and Validation Accuracy')
 
-# plt.subplot(1, 2, 2)
-# plt.plot(epochs_range, loss, label='Training Loss')
-# plt.plot(epochs_range, val_loss, label='Validation Loss')
-# plt.legend(loc='upper right')
-# plt.title('Training and Validation Loss')
-# plt.show()
+plt.subplot(1, 2, 2)
+plt.plot(epochs_range, loss, label='Training Loss')
+plt.plot(epochs_range, val_loss, label='Validation Loss')
+plt.legend(loc='upper right')
+plt.title('Training and Validation Loss')
+plt.show()
 
+model.save('Training/Modelo')
 
 data_dir_pruebas = pathlib.Path('Images/Tests/Fur_elise_61.wav.png')
 
-# sunflower_url = "https://storage.googleapis.com/download.tensorflow.org/example_images/592px-Red_sunflower.jpg"
-
-# sunflower_path = tf.keras.utils.get_file('Red_sunflower', origin=sunflower_url)
-
-# print(sunflower_path)
 img = keras.preprocessing.image.load_img(
     data_dir_pruebas, target_size=(img_height, img_width)
 )
