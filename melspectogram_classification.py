@@ -12,6 +12,7 @@ import pathlib
 
 import matplotlib.pyplot as plt
 
+
 data_dir = pathlib.Path('Images/Training')
 
 image_count = len(list(data_dir.glob('*/*.png')))

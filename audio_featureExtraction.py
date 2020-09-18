@@ -204,7 +204,7 @@ def main():
         saveWaveplots(losAudios, datos, senales)
     print("Waveplots generados")
     print("Generando Espectogramas")
-    for losAudios, datos, senales in zip(listaAudios, datas, srs):
+    for losAudios, datos, senales in zip(listaAudios, posDatas, srs):
         saveSpectograms(losAudios, datos, senales)
     print("Espectogramas generados")
     print("Generando Espectogramas tipo mel")
