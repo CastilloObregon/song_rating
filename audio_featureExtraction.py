@@ -102,7 +102,7 @@ def audioLen(audioName, theData, theSr):
     texto = audioName + " dura: "+str(durAudio)
     audiosLen.append(texto)
 
-# ================================== FUNCIONES PARA MOSTRAR WAVEPLOTS Y ESPECTOGRAMAS ===========================
+# ================================== FUNCIONES PARA MOSTRAR WAVEPLOTS Y ESPECTROGRAMAS ===========================
 
 
 def saveWaveplots(audioName, theData, theSr):
@@ -118,25 +118,25 @@ def saveWaveplots(audioName, theData, theSr):
 # @jit(target ="cuda")
 
 
-def saveSpectograms(audioName, theData, theSr):
+def saveSpectrograms(audioName, theData, theSr):
     X = librosa.stft(theData)
     Xdb = librosa.amplitude_to_db(abs(X))
     librosa.display.specshow(Xdb, sr=theSr, x_axis='time', y_axis='hz')
     # plt.colorbar()
     # plt.show()
-    filename = 'Images/Espectogramas/Hz/' + str(audioName) + '.png'
+    filename = 'Images/Espectrogramas/Hz/' + str(audioName) + '.png'
     plt.savefig(filename)
     plt.clf()
     librosa.display.specshow(Xdb, sr=theSr, x_axis='time', y_axis='log')
     # plt.show()
-    filename2 = 'Images/Espectogramas/Log/' + str(audioName) + '.png'
+    filename2 = 'Images/Espectrogramas/Log/' + str(audioName) + '.png'
     plt.savefig(filename2)
     plt.clf()
 
 # @jit(target ="cuda")
 
 
-def melSpectograms(audioName, theData, theSr):
+def melSpectrograms(audioName, theData, theSr):
 
     pianosong, trIndex = librosa.effects.trim(theData)
 
@@ -156,14 +156,14 @@ def melSpectograms(audioName, theData, theSr):
     # filename1 = 'Images/Mel_Spectograms/y_axis_linear/' + str(audioName) +'.png'
     # plt.savefig(filename1)
 
-    # Espectograma de Mel
+    # Espectrograma de Mel
     DB = librosa.amplitude_to_db(D, ref=np.max)
 
     librosa.display.specshow(
         DB, sr=theSr, hop_length=hop_length, x_axis='time', y_axis='log')
     # plt.colorbar(format='%+2.0f dB')
     # plt.show()
-    filename2 = 'Images/Mel_Spectograms/y_axis_mel/' + str(audioName) + '.png'
+    filename2 = 'Images/Mel_Spectrograms/y_axis_mel/' + str(audioName) + '.png'
     plt.savefig(filename2)
     plt.clf()
 
@@ -203,14 +203,14 @@ def main():
     for losAudios, datos, senales in zip(listaAudios, posDatas, srs):
         saveWaveplots(losAudios, datos, senales)
     print("Waveplots generados")
-    print("Generando Espectogramas")
+    print("Generando Espectrogramas")
     for losAudios, datos, senales in zip(listaAudios, posDatas, srs):
-        saveSpectograms(losAudios, datos, senales)
-    print("Espectogramas generados")
-    print("Generando Espectogramas tipo mel")
+        saveSpectrograms(losAudios, datos, senales)
+    print("Espectrogramas generados")
+    print("Generando Espectrogramas tipo mel")
     for losAudios, datos, senales in zip(listaAudios, posDatas, srs):
-        melSpectograms(losAudios, datos, senales)
-    print("Espectogramas tipo mel generados")
+        melSpectrograms(losAudios, datos, senales)
+    print("Espectrogramas tipo mel generados")
 
     print("Generando CSV ...")
 

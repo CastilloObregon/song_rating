@@ -1,3 +1,9 @@
-/Images
-/Audios
-/Testing
+/Images/Espectrogramas/*
+/Images/Mel_Spectrograms/*
+/Images/Tests/*
+/Images/Training/*
+/Images/Waveplots/*
+/Audios/*
+/Testing/Audios_output/*
+/Testing/Images_output/*
+
